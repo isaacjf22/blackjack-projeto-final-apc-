@@ -1,6 +1,16 @@
-#EXPLODE 21
+<h1 align="center">
+   >EXPLODE 21< 
+</h1>
 
-Projeto final desenvolvido para a disciplina de **Algoritmos e Programação de Computadores (APC)** da Universidade de Brasília (UnB).
+<p align="center">
+  <b>Projeto Final de Algoritmos e Programação de Computadores (APC) - UnB</b>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Language-C-blue?style=for-the-badge&logo=c">
+  <img src="https://img.shields.io/badge/IDE-VS%20Code-blueviolet?style=for-the-badge&logo=visual-studio-code">
+  <img src="https://img.shields.io/badge/Status-Finalizado-success?style=for-the-badge">
+</p>
 
 ---
 
