@@ -4,14 +4,17 @@
 #include <conio.h>
 #include <time.h>
 
+double saldo=1000; 
+
 void menu();
 void regras(); 
 void desenhoCarta(int num);
-void rodada();
+double rodada(double saldo);
 int numeroCarta(); 
 int pontuacaoCarta(int num); 
-void finalRodada(int somaj,int somam);
+int finalRodada(int somaj,int somam);
 int validacaoEstouro(int somaj,int somam);
+double adicionarSaldo(double saldoant);
 
 int main(){
     srand(time(NULL)); //define onde começa o aleatório 
@@ -35,24 +38,28 @@ void menu(){
             printf("\n");
             printf(" ==========================================================================\n");
             printf("\n");
+            printf("SALDO DISPONÍVEL: R$%.2lf\n",saldo); 
             printf("1. JOGAR\n");
             printf("2. REGRAS\n");
-            printf("3. SAIR\n"); 
+            printf("3. ADICIONAR SALDO\n");
+            printf("4. SAIR\n"); 
 
             do{
                 esc=getch(); 
-            }while(esc!='1' && esc!='2' && esc!='3');
+            }while(esc!='1' && esc!='2' && esc!='3' && esc!='4');
 
             switch(esc){
-                case '1': rodada();
+                case '1': saldo=rodada(saldo);
                 break;
                 case '2': regras();
-                break; 
-                case '3': puts("Saindo do jogo...");
+                break;
+                case '3': saldo=adicionarSaldo(saldo); //fazendo que o novo saldo , seja oq retornou da função
+                break;
+                case '4': puts("Saindo do jogo...");
                 break;
             }
 
-        }while(esc!='3'); 
+        }while(esc!='4'); 
 
         return; 
 
@@ -93,44 +100,44 @@ void regras(){
     return; 
 }
 
-void finalRodada(int somaj,int somam){
+int finalRodada(int somaj,int somam){
     if(somaj>somam){
         printf(" ==========================================================================\n");
         puts("|                               VOCÊ GANHOU!                               |");
-        printf("|              A SUA PONTUAÇÃO FOI SUPERIOR QUE A DA MÁQUINA            |\n"); 
+        printf("|              A SUA PONTUAÇÃO FOI SUPERIOR QUE A DA MÁQUINA            \n"); 
         printf(" ==========================================================================\n");
         puts("");
-        return; 
+        return 2; 
     }else if(somam>somaj){
         printf(" ==========================================================================\n");
         puts("|                               VOCÊ PERDEU!                               |");
-        printf("|              A SUA PONTUAÇÃO FOI INFERIOR QUE A DA MÁQUINA               |\n"); 
+        printf("|              A SUA PONTUAÇÃO FOI INFERIOR QUE A DA MÁQUINA               \n"); 
         printf(" ==========================================================================\n");
         puts("");
-        return;
+        return 1;
     }else{
         printf(" ==========================================================================\n");
         puts("|                               EMPATE!                                    |");
-        printf("|                    AS PONTUAÇÕES FORAM AS MESMAS                       |\n"); 
+        printf("|                    AS PONTUAÇÕES FORAM AS MESMAS                       \n"); 
         printf(" ==========================================================================\n");
         puts("");
-        return;
+        return 3;
     }
 }
 
 int validacaoEstouro(int somaj, int somam){
     if(somaj>21){
         printf(" ==========================================================================\n");
-        puts("|                               VOCE PERDEU!                               |");
-        printf("|                    SUA PONTUAÇÃO , %d , ULTRAPASSOU 21                 |\n",somaj); 
+        puts("|                               VOCÊ PERDEU!                               |");
+        printf("|                    SUA PONTUAÇÃO, %d, ULTRAPASSOU 21                 \n",somaj); 
         printf(" ==========================================================================\n");
         puts("");
         return 1;
     }
     if(somam>21){
         printf(" ==========================================================================\n");
-        puts("|                               VOCE GANHOU!                              |");
-        printf("|                 A PONTUAÇÃO DA MÁQUINA , %d , ULTRAPASSOU 21          |\n",somam); 
+        puts("|                               VOCÊ GANHOU!                              |");
+        printf("|                 A PONTUAÇÃO DA MÁQUINA, %d, ULTRAPASSOU 21          \n",somam); 
         printf(" ==========================================================================\n");
         puts("");
         return 2;
@@ -142,6 +149,24 @@ int numeroCarta(){
     int num;
     num=((rand()%13)+1);
     return num; 
+}
+
+double adicionarSaldo(double saldoant){
+    double totaln,saldoadd;
+    system("CLS"); 
+    printf(" ==========================================================================\n");
+    puts("|                          ADICIONANDO SALDO                               |"); 
+    printf(" ==========================================================================\n");
+    puts("Quantos R$ você quer adicionar?");
+    scanf("%lf",&saldoadd);
+    getchar(); 
+    totaln=saldoant+saldoadd; 
+    puts("");
+    printf("O seu novo saldo é de R$%.2lf\n",totaln);
+    puts("Aperte ENTER para voltar ao MENU INICIAL...");
+    getch(); 
+    return totaln; 
+
 }
 
 void desenhoCarta(int num){
@@ -191,11 +216,48 @@ int pontuacaoCarta(int num){
     }
 }
 
-void rodada(){
+double rodada(double saldo){
     int num,somaPontosJ=0,somaPontosM=0,i; 
     int cartasJ[10], cartasM[10];
     int qCartasJ=0,qCartasM=0; 
-    char esc;
+    char esc,escp;
+    double apostado;
+    int aposta=0; 
+    int dentroap=0;
+
+    system("CLS"); 
+    puts("Você deseja apostar alguma quantia nessa rodada?");
+    printf("SALDO ATUAL -> R$%.2lf\n",saldo);
+    puts("S-SIM ou N-NÃO");
+    do{
+        escp=getch();
+    }while(escp!='S' && escp!='s' && escp!='n' && escp!='N'); 
+    puts(""); 
+    if(escp=='S' || escp=='s'){
+        if(saldo<=0){
+            puts("Você está quebrado! Jogue na brincadeira mesmo...");
+            Sleep(2000);
+        }else{
+            dentroap=1;
+            do{
+                puts("Quanto você gostaria de apostar?");
+                scanf("%lf",&apostado);
+                if(apostado>saldo){
+                    puts("Você não tem saldo suficiente para essa aposta!");
+                }else if(apostado<=0){
+                    puts("A sua aposta não pode ser menor ou igual a 0");
+                }
+                getchar();
+            }while(apostado>saldo || apostado<=0); //validação quanto é apostado
+                
+                saldo=saldo-apostado;
+                printf("A sua aposta foi aceita! Novo saldo: R$%.2lf\n",saldo); 
+                printf("Caso você ganhe, receberá R$%.2lf\n",2*apostado);
+                puts(""); 
+        }
+    }
+    puts("Aperte ENTER para que a rodada seja iniciada...");
+    getch(); 
 
     system("CLS");
     printf(" ==========================================================================\n");
@@ -257,9 +319,17 @@ void rodada(){
             desenhoCarta(num);
             somaPontosJ+=pontuacaoCarta(num);
             if(validacaoEstouro(somaPontosJ,somaPontosM)==1){
-                puts("Aperte ENTER para voltar ao MENU INICIAL...");
-                getch(); 
-                return;
+                if(dentroap==1){
+                    puts("Você também perdeu a aposta :(");
+                    printf("Saldo atual: R$%.2lf\n",saldo);
+                    Sleep(2000);
+                    puts("Aperte ENTER para voltar ao MENU INICIAL...");
+                    getch();
+                }else{
+                    puts("Aperte ENTER para voltar ao MENU INICIAL...");
+                    getch();
+                }
+                return saldo;
             } 
             printf("Nova pontuação do jogador: %d \n",somaPontosJ); 
         }
@@ -284,40 +354,50 @@ void rodada(){
         Sleep(1000); 
     } 
 
-    puts("Aperte ENTER para a máquina puxar suas cartas...");
-    getch(); 
 
-    do{
+    while(somaPontosM<17){
+        puts("Aperte ENTER para a máquina puxar suas cartas...");
+        getch();
+
         Sleep(2000);
         num=numeroCarta();
         desenhoCarta(num); 
         somaPontosM+=pontuacaoCarta(num);
         if(validacaoEstouro(somaPontosJ,somaPontosM)==2){
+            if(dentroap==1){
+                puts("Você também ganhou a aposta :)");
+                printf("Saldo atual: R$%.2lf\n",saldo+(2*apostado));
+                saldo=saldo+(2*apostado);
+                Sleep(2000);
+            }
             puts("Aperte ENTER para voltar ao MENU INICIAL...");
-            getch(); 
-            return;
+            getch();
+            return saldo; 
         }
     printf("Nova pontuação da máquina: %d \n",somaPontosM);
+    }
     puts("Aperte ENTER para continuar a RODADA...");
     getch();    
-    }while(somaPontosM<17);
+    
 
     system("CLS"); 
 
-    finalRodada(somaPontosJ,somaPontosM);
+    aposta=finalRodada(somaPontosJ,somaPontosM);
+    if(aposta==1 && dentroap==1){
+        puts("Você também perdeu a aposta :(");
+        printf("Saldo atual: R$%.2lf\n",saldo);
+        Sleep(2000); 
+    }else if(aposta==2 && dentroap==1){
+        puts("Você também ganhou a aposta :)");
+        printf("Saldo atual: R$%.2lf\n",saldo+(2*apostado));
+        saldo=saldo+(2*apostado);
+        Sleep(2000);
+    }else if(aposta==3 && dentroap==1){
+        puts("Como foi empate, seu dinheiro foi devolvido :|");
+        saldo=saldo+apostado; //recuperou o dinheiro  
+        Sleep(2000);
+    }
     puts("Aperte ENTER para voltar ao MENU INICIAL...");
     getch();
-
-    return; 
+    return saldo;
 }
-
-
-
-    
-
-    
-    
-
-    
-    
-
